@@ -11,35 +11,31 @@ namespace Reservoom.Models
         private readonly ReservationBook _reservationBook;
         public string Name { get; }
 
-        public Hotel(string name)
+        public Hotel(string name, ReservationBook reservationBook)
         {
             Name = name;
-            _reservationBook = new ReservationBook();
+            _reservationBook = reservationBook;
         }
 
-        /// <summary>
-        /// Get the reservations for a user.
-        /// </summary>
-        /// <param name="username">The username of the user.</param>
-        /// <returns>The reservations for the user.</returns>
+        
 
         // method that use our reservation book and these will be pretty straightforward,
         // and delegate all this functionality down to the reservation book,
         // so it pass to username to get reservations for user on the reservation book
-        public IEnumerable<Reservation> GetReservationsForUser(string username)
+        public async Task<IEnumerable<Reservation>> GetAllReservations()
         {
-            return _reservationBook.GetReservationsForUser(username);
+            return await _reservationBook.GetAllReservations();
         }
         /// <summary>
-        /// Make a reservation.
+        /// Add a reservation to the reservation book.
         /// </summary>
         /// <param name="reservation">The incoming reservation.</param>
-        /// <exception cref="ReservationConflictException"
+        /// <exception cref="ReservationConflictException">Thrown if incoming reservation conflicts with existing reservation.</exception>
 
         // make reservation passing in the reservation that we want to make
-        public void MakeReservation(Reservation reservation)
+        public async Task MakeReservation(Reservation reservation)
         {
-            _reservationBook.AddReservation(reservation);
+            await _reservationBook.AddReservation(reservation);
         }
     }
 }

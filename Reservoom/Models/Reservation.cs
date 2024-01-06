@@ -22,15 +22,5 @@ namespace Reservoom.Models
             StartTime = startTime;
             EndTime = endTime;
         }
-
-        internal bool Conflict(Reservation reservation)
-        {
-            if (reservation.RoomID != RoomID)
-            {
-                return false;
-            }
-
-            return reservation.StartTime < EndTime || reservation.EndTime > StartTime;
-        }
     }
 }
