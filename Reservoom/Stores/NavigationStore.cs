@@ -17,6 +17,7 @@ namespace Reservoom.Stores
             get => _currentViewModel;
             set
             {
+                _currentViewModel?.Dispose();
                 _currentViewModel = value;
                 OncurrentViewModelChanged();
             }

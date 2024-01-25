@@ -17,5 +17,8 @@ namespace Reservoom.ViewModels
             //if anythins is subscribed to it, we will invoke it with the sender as this viewmodel and some property changed envent args
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        // to clean up ViewModel
+        public virtual void Dispose() { }
     }
 }

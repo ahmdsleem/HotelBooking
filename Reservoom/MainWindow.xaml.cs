@@ -17,6 +17,7 @@ namespace Reservoom
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// Chapter #7, Minute 5:30
     /// </summary>
     public partial class MainWindow : Window
     {

@@ -30,6 +30,11 @@ namespace Reservoom.Services.ReservationConflictValidators
                     .Where(r => r.StartTime < reservation.EndTime)
                     .FirstOrDefaultAsync();
 
+                if (reservationDTO == null)
+                {
+                    return null;
+                }
+
                 return ToReservation(reservationDTO);
             }
         }

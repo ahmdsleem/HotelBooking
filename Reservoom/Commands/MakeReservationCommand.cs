@@ -1,6 +1,7 @@
 ﻿using Reservoom.Exceptions;
 using Reservoom.Models;
 using Reservoom.Services;
+using Reservoom.Stores;
 using Reservoom.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -17,17 +18,19 @@ namespace Reservoom.Commands
     {
         private readonly MakeReservationViewModel _makeReservationViewModel;
         // I make _hotel field to pass into MakeReservationCommand
-        private readonly Hotel _hotel;
+        private readonly HotelStore _hotelStore;
         private readonly NavigationService _reservationViewNavigationService;
 
         // initialize MakeReservationCommand and pass hotel through it.
         // in the MakeReservationCommand we add a NavigationService (through the constructor)
         // and call it a reservationViewNavigationService (because I want to anvigate to),
         // and put that into a field
-        public MakeReservationCommand(MakeReservationViewModel makeReservationViewModel, Hotel hotel, NavigationService reservationViewNavigationService)
+        public MakeReservationCommand(MakeReservationViewModel makeReservationViewModel,
+            HotelStore hotelStore,
+            NavigationService reservationViewNavigationService)
         {
             _makeReservationViewModel = makeReservationViewModel;
-            _hotel = hotel;
+            _hotelStore = hotelStore;
             _reservationViewNavigationService = reservationViewNavigationService;
             // to subscribe to PropertyChanged on our viewmodel
             _makeReservationViewModel.PropertyChanged += OnViewModelPropertyChanged;
@@ -52,12 +55,11 @@ namespace Reservoom.Commands
 
             try
             {
-                await _hotel.MakeReservation(reservation);
+                await _hotelStore.MakeReservation(reservation);
 
                 MessageBox.Show("Successfully reserved room", "Success",
                     MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                    );
+                    MessageBoxImage.Information);
 
                 // when we make the reservation we will take our navigation service and navigate.
                 _reservationViewNavigationService.Navigate();

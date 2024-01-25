@@ -19,27 +19,48 @@ namespace Reservoom.ViewModels
     {
         // every time we add items or insert items or remove items from this collection our list view is going to automatically update
         private readonly ObservableCollection<ReservationViewModel> _reservations;
+        private readonly HotelStore _hotelStore;
 
         // it's expose observable collection as an IEnumerable as same type reservation view models and
         // we'll call this reservations and it just be a property that points to our reservations field
         // I expose this as an enumerable is just for encapsulation so any class outside the reservation listing view model
         // can't just grab this property and add or remove items, however it pleases
         public IEnumerable<ReservationViewModel> Reservations => _reservations;
+
         public ICommand LoadReservationsCommand { get; }
         public ICommand MakeReservationCommand { get; }
 
-        public ReservationListingViewModel(Hotel hotel, NavigationService makeReservationNavigationService)
+        public ReservationListingViewModel(HotelStore hotelStore, NavigationService makeReservationNavigationService)
         {
+            _hotelStore = hotelStore;
             _reservations = new ObservableCollection<ReservationViewModel>();
 
             // initialize the MakeReservationCommand to be a new NavigateCommand, which we do successfully execute 
-            LoadReservationsCommand = new LoadReservationsCommand(this, hotel);
+            LoadReservationsCommand = new LoadReservationsCommand(this, hotelStore);
             MakeReservationCommand = new NavigateCommand(makeReservationNavigationService);
 
+            //subscribe to the event, so we have to be careful about memory leaks
+            _hotelStore.ReservationMade += OnReservationMode;
+
         }
-        public static ReservationListingViewModel LoadViewModel(Hotel hotel, NavigationService makeReservationNavigationService)
+
+        public override void Dispose()
         {
-            ReservationListingViewModel viewModel = new ReservationListingViewModel(hotel, makeReservationNavigationService);
+            // we need our _hotelStore into a field so that we can reference it later
+            _hotelStore.ReservationMade -= OnReservationMode;
+            // to unsubscribe from our event
+            base.Dispose();
+        }
+
+        private void OnReservationMode(Reservation reservation)
+        {
+            ReservationViewModel reservationViewModel = new ReservationViewModel(reservation);
+            _reservations.Add(reservationViewModel);
+        }
+
+        public static ReservationListingViewModel LoadViewModel(HotelStore hotelStore, NavigationService makeReservationNavigationService)
+        {
+            ReservationListingViewModel viewModel = new ReservationListingViewModel(hotelStore, makeReservationNavigationService);
 
             viewModel.LoadReservationsCommand.Execute(null);
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Reservoom.DBContext;
 using Reservoom.Exceptions;
 using Reservoom.Models;
@@ -27,6 +28,7 @@ namespace Reservoom
 
         // set Hotel for our application, that we'll use all throughout our application
         private readonly Hotel _hotel;
+        private readonly HotelStore _hotelStore;
         // navigation store, this will be our single navigation store for the application,
         // and we can pass that down throughtout our application via the MainViewModel
         private readonly NavigationStore _navigationStore;
@@ -44,6 +46,7 @@ namespace Reservoom
             ReservationBook reservationBook = new ReservationBook(reservationProvider, reservationCreator, reservationConflictValidator);
 
             _hotel = new Hotel("SingletonSean Suites", reservationBook);
+            _hotelStore = new HotelStore(_hotel);
             // instantiate the navigation store
             _navigationStore = new NavigationStore();
         }
@@ -76,12 +79,12 @@ namespace Reservoom
 
         private MakeReservationViewModel CreateMakeReservationViewModel()
         {
-            return new MakeReservationViewModel(_hotel, new NavigationService(_navigationStore, CreateReservationViewModel));
+            return new MakeReservationViewModel(_hotelStore, new NavigationService(_navigationStore, CreateReservationViewModel));
         }
 
         private ReservationListingViewModel CreateReservationViewModel()
         {
-            return ReservationListingViewModel.LoadViewModel(_hotel,new NavigationService(_navigationStore, CreateMakeReservationViewModel));
+            return ReservationListingViewModel.LoadViewModel(_hotelStore, new NavigationService(_navigationStore, CreateMakeReservationViewModel));
         }
     }
 }
